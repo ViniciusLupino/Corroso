@@ -19,14 +19,14 @@ namespace MimDaNota.Controllers
             _context = context;
         }
 
-        // GET: Produto
+        // GET: Produtos
         public async Task<IActionResult> Index()
         {
-            var context = _context.Produto.Include(p => p.Categoria).Include(p => p.Fornecedor).Include(p => p.User);
+            var context = _context.Produto.Include(p => p.Categoria).Include(p => p.Fornecedor);
             return View(await context.ToListAsync());
         }
 
-        // GET: Produto/Details/5
+        // GET: Produtos/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -37,7 +37,6 @@ namespace MimDaNota.Controllers
             var produto = await _context.Produto
                 .Include(p => p.Categoria)
                 .Include(p => p.Fornecedor)
-                .Include(p => p.User)
                 .FirstOrDefaultAsync(m => m.ProdutoId == id);
             if (produto == null)
             {
@@ -47,21 +46,20 @@ namespace MimDaNota.Controllers
             return View(produto);
         }
 
-        // GET: Produto/Create
+        // GET: Produtos/Create
         public IActionResult Create()
         {
             ViewData["CategoriaId"] = new SelectList(_context.Categoria, "CategoriaId", "CategoriaId");
             ViewData["FornecedorId"] = new SelectList(_context.Fornecedor, "FornecedorId", "FornecedorId");
-            ViewData["UserId"] = new SelectList(_context.User, "UserId", "UserId");
             return View();
         }
 
-        // POST: Produto/Create
+        // POST: Produtos/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ProdutoId,ProdutoDescricao,ProdutoNome,ProdutoPreco,ProdutoEstoque,UserId,FornecedorId,CategoriaId")] Produto produto)
+        public async Task<IActionResult> Create([Bind("ProdutoId,ProdutoDescricao,ProdutoNome,ProdutoPreco,ProdutoEstoque,FornecedorId,CategoriaId")] Produto produto)
         {
             if (ModelState.IsValid)
             {
@@ -72,11 +70,10 @@ namespace MimDaNota.Controllers
             }
             ViewData["CategoriaId"] = new SelectList(_context.Categoria, "CategoriaId", "CategoriaId", produto.CategoriaId);
             ViewData["FornecedorId"] = new SelectList(_context.Fornecedor, "FornecedorId", "FornecedorId", produto.FornecedorId);
-            ViewData["UserId"] = new SelectList(_context.User, "UserId", "UserId", produto.UserId);
             return View(produto);
         }
 
-        // GET: Produto/Edit/5
+        // GET: Produtos/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -91,16 +88,15 @@ namespace MimDaNota.Controllers
             }
             ViewData["CategoriaId"] = new SelectList(_context.Categoria, "CategoriaId", "CategoriaId", produto.CategoriaId);
             ViewData["FornecedorId"] = new SelectList(_context.Fornecedor, "FornecedorId", "FornecedorId", produto.FornecedorId);
-            ViewData["UserId"] = new SelectList(_context.User, "UserId", "UserId", produto.UserId);
             return View(produto);
         }
 
-        // POST: Produto/Edit/5
+        // POST: Produtos/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("ProdutoId,ProdutoDescricao,ProdutoNome,ProdutoPreco,ProdutoEstoque,UserId,FornecedorId,CategoriaId")] Produto produto)
+        public async Task<IActionResult> Edit(Guid id, [Bind("ProdutoId,ProdutoDescricao,ProdutoNome,ProdutoPreco,ProdutoEstoque,FornecedorId,CategoriaId")] Produto produto)
         {
             if (id != produto.ProdutoId)
             {
@@ -129,11 +125,10 @@ namespace MimDaNota.Controllers
             }
             ViewData["CategoriaId"] = new SelectList(_context.Categoria, "CategoriaId", "CategoriaId", produto.CategoriaId);
             ViewData["FornecedorId"] = new SelectList(_context.Fornecedor, "FornecedorId", "FornecedorId", produto.FornecedorId);
-            ViewData["UserId"] = new SelectList(_context.User, "UserId", "UserId", produto.UserId);
             return View(produto);
         }
 
-        // GET: Produto/Delete/5
+        // GET: Produtos/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -144,7 +139,6 @@ namespace MimDaNota.Controllers
             var produto = await _context.Produto
                 .Include(p => p.Categoria)
                 .Include(p => p.Fornecedor)
-                .Include(p => p.User)
                 .FirstOrDefaultAsync(m => m.ProdutoId == id);
             if (produto == null)
             {
@@ -154,7 +148,7 @@ namespace MimDaNota.Controllers
             return View(produto);
         }
 
-        // POST: Produto/Delete/5
+        // POST: Produtos/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)

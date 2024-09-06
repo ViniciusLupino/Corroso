@@ -13,10 +13,12 @@ namespace MimDaNota.Models
         public Guid ProdutoId { get; set; }
         public Produto? Produto { get; set; }
 
+        public decimal ValorTotal => Quantidade * Produto?.ProdutoPreco ?? 0;
+
         /*************************************************/
 
         public Guid UsuarioId { get; set; }
-        public User Usuario { get; set; }
+        public User? Usuario { get; set; }
 
         /*************************************************/
     }

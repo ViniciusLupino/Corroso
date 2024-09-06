@@ -525,3 +525,4 @@ C:\Users\SENAI3EM\Desktop\MimDaNota\MimDaNota\obj\Debug\net8.0\MimDaNota.csproj.
 C:\Users\SENAI3EM\Desktop\MimDaNota\MimDaNota\obj\Debug\net8.0\MimDaNota.genruntimeconfig.cache
 C:\Users\SENAI3EM\Desktop\MimDaNota\MimDaNota\obj\Debug\net8.0\ref\MimDaNota.dll
 C:\Users\Vinicius\Desktop\MimDaNota\MimDaNota\obj\Debug\net8.0\MimDaNota.sourcelink.json
+C:\Users\SENAI3EM\Desktop\MimDaNota\MimDaNota\obj\Debug\net8.0\MimDaNota.sourcelink.json

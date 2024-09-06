@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MimDaNota.Migrations
 {
     /// <inheritdoc />
-    public partial class Inital : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -63,8 +63,7 @@ namespace MimDaNota.Migrations
                     ProdutoPreco = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     ProdutoEstoque = table.Column<int>(type: "int", nullable: false),
                     FornecedorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CategoriaId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    CategoriaId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -81,12 +80,6 @@ namespace MimDaNota.Migrations
                         principalTable: "tbFornecedor",
                         principalColumn: "FornecedorId",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_tbProduto_tbUser_UserId",
-                        column: x => x.UserId,
-                        principalTable: "tbUser",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -96,8 +89,7 @@ namespace MimDaNota.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Quantidade = table.Column<int>(type: "int", nullable: false),
                     ProdutoId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UsuarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    UsuarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -109,10 +101,11 @@ namespace MimDaNota.Migrations
                         principalColumn: "ProdutoId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_tbNotaFiscal_tbUser_UserId",
-                        column: x => x.UserId,
+                        name: "FK_tbNotaFiscal_tbUser_UsuarioId",
+                        column: x => x.UsuarioId,
                         principalTable: "tbUser",
-                        principalColumn: "UserId");
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -121,9 +114,9 @@ namespace MimDaNota.Migrations
                 column: "ProdutoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_tbNotaFiscal_UserId",
+                name: "IX_tbNotaFiscal_UsuarioId",
                 table: "tbNotaFiscal",
-                column: "UserId");
+                column: "UsuarioId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_tbProduto_CategoriaId",
@@ -134,11 +127,6 @@ namespace MimDaNota.Migrations
                 name: "IX_tbProduto_FornecedorId",
                 table: "tbProduto",
                 column: "FornecedorId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_tbProduto_UserId",
-                table: "tbProduto",
-                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -151,13 +139,13 @@ namespace MimDaNota.Migrations
                 name: "tbProduto");
 
             migrationBuilder.DropTable(
+                name: "tbUser");
+
+            migrationBuilder.DropTable(
                 name: "tbCategoria");
 
             migrationBuilder.DropTable(
                 name: "tbFornecedor");
-
-            migrationBuilder.DropTable(
-                name: "tbUser");
         }
     }
 }

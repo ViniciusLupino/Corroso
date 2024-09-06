@@ -12,8 +12,8 @@ using MimDaNota.Data;
 namespace MimDaNota.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20240901154647_Inital")]
-    partial class Inital
+    [Migration("20240906161424_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -74,9 +74,6 @@ namespace MimDaNota.Migrations
                     b.Property<int>("Quantidade")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("UsuarioId")
                         .HasColumnType("uniqueidentifier");
 
@@ -84,7 +81,7 @@ namespace MimDaNota.Migrations
 
                     b.HasIndex("ProdutoId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UsuarioId");
 
                     b.ToTable("tbNotaFiscal", (string)null);
                 });
@@ -115,16 +112,11 @@ namespace MimDaNota.Migrations
                     b.Property<decimal>("ProdutoPreco")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("ProdutoId");
 
                     b.HasIndex("CategoriaId");
 
                     b.HasIndex("FornecedorId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("tbProduto", (string)null);
                 });
@@ -168,13 +160,15 @@ namespace MimDaNota.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MimDaNota.Models.User", "User")
+                    b.HasOne("MimDaNota.Models.User", "Usuario")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Produto");
 
-                    b.Navigation("User");
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("MimDaNota.Models.Produto", b =>
@@ -191,17 +185,9 @@ namespace MimDaNota.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MimDaNota.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Categoria");
 
                     b.Navigation("Fornecedor");
-
-                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

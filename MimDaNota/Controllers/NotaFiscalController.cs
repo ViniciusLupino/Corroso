@@ -35,9 +35,9 @@ namespace MimDaNota.Controllers
             }
 
             var notaFiscal = await _context.NotaFiscal
-            .Include(n => n.Produto)
-            .Include(n => n.Usuario) // Adicione isso
-            .FirstOrDefaultAsync(m => m.Id == id);
+                .Include(n => n.Produto)
+                .Include(n => n.Usuario)
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (notaFiscal == null)
             {
                 return NotFound();
@@ -50,6 +50,7 @@ namespace MimDaNota.Controllers
         public IActionResult Create()
         {
             ViewData["ProdutoId"] = new SelectList(_context.Produto, "ProdutoId", "ProdutoId");
+            ViewData["UsuarioId"] = new SelectList(_context.User, "UserId", "UserId");
             return View();
         }
 
@@ -62,13 +63,29 @@ namespace MimDaNota.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Verificar se há estoque suficiente
+                var produto = await _context.Produto.FindAsync(notaFiscal.ProdutoId);
+                if (produto == null || produto.ProdutoEstoque < notaFiscal.Quantidade)
+                {
+                    ModelState.AddModelError("", "Estoque insuficiente para completar a nota fiscal.");
+                    ViewData["ProdutoId"] = new SelectList(_context.Produto, "ProdutoId", "ProdutoId", notaFiscal.ProdutoId);
+                    ViewData["UsuarioId"] = new SelectList(_context.User, "UserId", "UserId", notaFiscal.UsuarioId);
+                    return View(notaFiscal);
+                }
+
+                // Atualizar o estoque
+                produto.ProdutoEstoque -= notaFiscal.Quantidade;
+                _context.Update(produto);
+                 
+                // Adicionar a nota fiscal
                 notaFiscal.Id = Guid.NewGuid();
                 _context.Add(notaFiscal);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["ProdutoId"] = new SelectList(_context.Produto, "ProdutoId", "ProdutoId", notaFiscal.ProdutoId);
-            ViewData["UsuarioId"] = new SelectList(_context.User, "Id", "Nome", notaFiscal.UsuarioId);
+            ViewData["UsuarioId"] = new SelectList(_context.User, "UserId", "UserId", notaFiscal.UsuarioId);
             return View(notaFiscal);
         }
 
@@ -86,7 +103,7 @@ namespace MimDaNota.Controllers
                 return NotFound();
             }
             ViewData["ProdutoId"] = new SelectList(_context.Produto, "ProdutoId", "ProdutoId", notaFiscal.ProdutoId);
-            ViewData["UsuarioId"] = new SelectList(_context.User, "Id", "Nome", notaFiscal.UsuarioId);
+            ViewData["UsuarioId"] = new SelectList(_context.User, "UserId", "UserId", notaFiscal.UsuarioId);
             return View(notaFiscal);
         }
 
@@ -123,26 +140,27 @@ namespace MimDaNota.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["ProdutoId"] = new SelectList(_context.Produto, "ProdutoId", "ProdutoId", notaFiscal.ProdutoId);
-            ViewData["UsuarioId"] = new SelectList(_context.User, "Id", "Nome", notaFiscal.UsuarioId);
+            ViewData["UsuarioId"] = new SelectList(_context.User, "UserId", "UserId", notaFiscal.UsuarioId);
             return View(notaFiscal);
         }
 
         // GET: NotaFiscal/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
-            if (id == null)
+            var notaFiscal = await _context.NotaFiscal.FindAsync(id);
+            if (notaFiscal != null)
             {
-                return NotFound();
-            }
+                // Reverter o estoque
+                var produto = await _context.Produto.FindAsync(notaFiscal.ProdutoId);
+                if (produto != null)
+                {
+                    produto.ProdutoEstoque += notaFiscal.Quantidade;
+                    _context.Update(produto);
+                }
 
-            var notaFiscal = await _context.NotaFiscal
-                .Include(n => n.Produto)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (notaFiscal == null)
-            {
-                return NotFound();
+                _context.NotaFiscal.Remove(notaFiscal);
+                await _context.SaveChangesAsync();
             }
-
             return View(notaFiscal);
         }
 
